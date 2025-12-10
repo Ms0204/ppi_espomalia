@@ -33,7 +33,8 @@ class Productos extends Model
      */
     public function ingresos()
     {
-        return $this->hasMany(Ingresos::class, 'idProducto', 'id');
+        // En PostgreSQL las columnas se almacenan en minúsculas
+        return $this->hasMany(Ingresos::class, 'idproducto', 'id');
     }
 
     /**
@@ -41,6 +42,7 @@ class Productos extends Model
      */
     public function egresos()
     {
-        return $this->hasMany(Egresos::class, 'idProducto', 'id');
+        // En PostgreSQL las columnas se almacenan en minúsculas
+        return $this->hasMany(Egresos::class, 'idproducto', 'id');
     }
 }

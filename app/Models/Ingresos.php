@@ -9,16 +9,16 @@ class Ingresos extends Model
     protected $table = 'ingresos';
     protected $fillable = [
         'cantidad',
-        'fechaIngreso',
-        'idProducto',
-        'codigoInventario',
+        'fechaingreso',
+        'idproducto',
+        'codigoinventario',
         'observacion'
     ];
 
     public $timestamps = true;
     
     protected $casts = [
-        'fechaIngreso' => 'date',
+        'fechaingreso' => 'date',
         'cantidad' => 'integer'
     ];
 
@@ -27,7 +27,7 @@ class Ingresos extends Model
      */
     public function producto()
     {
-        return $this->belongsTo(Productos::class, 'idProducto', 'id');
+        return $this->belongsTo(Productos::class, 'idproducto', 'id');
     }
 
     /**
@@ -35,6 +35,37 @@ class Ingresos extends Model
      */
     public function inventario()
     {
-        return $this->belongsTo(Inventarios::class, 'codigoInventario', 'codigo');
+        return $this->belongsTo(Inventarios::class, 'codigoinventario', 'codigo');
+    }
+
+    // Accessors y mutators para mantener compatibilidad con camelCase
+    public function getFechaIngresoAttribute()
+    {
+        return $this->attributes['fechaingreso'] ?? null;
+    }
+
+    public function setFechaIngresoAttribute($value): void
+    {
+        $this->attributes['fechaingreso'] = $value;
+    }
+
+    public function getIdProductoAttribute()
+    {
+        return $this->attributes['idproducto'] ?? null;
+    }
+
+    public function setIdProductoAttribute($value): void
+    {
+        $this->attributes['idproducto'] = $value;
+    }
+
+    public function getCodigoInventarioAttribute()
+    {
+        return $this->attributes['codigoinventario'] ?? null;
+    }
+
+    public function setCodigoInventarioAttribute($value): void
+    {
+        $this->attributes['codigoinventario'] = $value;
     }
 }

@@ -19,17 +19,17 @@ return new class extends Migration
         Schema::create('egresos_temp', function (Blueprint $table) {
             $table->id();
             $table->integer('cantidad');
-            $table->date('fechaEgreso');
+            $table->date('fechaegreso');
             
-            $table->unsignedBigInteger('idProducto');
-            $table->foreign('idProducto')
+            $table->unsignedBigInteger('idproducto');
+            $table->foreign('idproducto')
                 ->references('id')
                 ->on('productos')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
             
-            $table->string('codigoInventario');
-            $table->foreign('codigoInventario')
+            $table->string('codigoinventario');
+            $table->foreign('codigoinventario')
                 ->references('codigo')
                 ->on('inventarios')
                 ->onDelete('restrict')
@@ -44,17 +44,17 @@ return new class extends Migration
         
         if ($hasObservacion) {
             DB::statement('
-                INSERT INTO egresos_temp (id, cantidad, fechaEgreso, idProducto, codigoInventario, observacion, created_at, updated_at)
-                SELECT e.id, e.cantidad, e.fechaEgreso, e.idProducto, i.codigo, e.observacion, e.created_at, e.updated_at
+                INSERT INTO egresos_temp (id, cantidad, fechaegreso, idproducto, codigoinventario, observacion, created_at, updated_at)
+                SELECT e.id, e.cantidad, e."fechaEgreso", e."idProducto", i.codigo, e.observacion, e.created_at, e.updated_at
                 FROM egresos e
-                LEFT JOIN inventarios i ON e.codigoInventario = i.id
+                LEFT JOIN inventarios i ON e."codigoInventario" = i.id
             ');
         } else {
             DB::statement('
-                INSERT INTO egresos_temp (id, cantidad, fechaEgreso, idProducto, codigoInventario, created_at, updated_at)
-                SELECT e.id, e.cantidad, e.fechaEgreso, e.idProducto, i.codigo, e.created_at, e.updated_at
+                INSERT INTO egresos_temp (id, cantidad, fechaegreso, idproducto, codigoinventario, created_at, updated_at)
+                SELECT e.id, e.cantidad, e."fechaEgreso", e."idProducto", i.codigo, e.created_at, e.updated_at
                 FROM egresos e
-                LEFT JOIN inventarios i ON e.codigoInventario = i.id
+                LEFT JOIN inventarios i ON e."codigoInventario" = i.id
             ');
         }
         
@@ -72,15 +72,15 @@ return new class extends Migration
     {
         Schema::table('egresos', function (Blueprint $table) {
             // Eliminar la llave foránea
-            $table->dropForeign(['codigoInventario']);
+            $table->dropForeign(['codigoinventario']);
             
             // Eliminar la columna
-            $table->dropColumn('codigoInventario');
+            $table->dropColumn('codigoinventario');
         });
 
         Schema::table('egresos', function (Blueprint $table) {
             // Restaurar la columna como unsignedBigInteger
-            $table->unsignedBigInteger('codigoInventario')->after('idProducto');
+            $table->unsignedBigInteger('codigoInventario')->after('idproducto');
             
             // Restaurar la llave foránea al id
             $table->foreign('codigoInventario')

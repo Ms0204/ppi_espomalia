@@ -22,9 +22,9 @@ class IngresoController extends Controller
             ->when($search, function($query) use ($search) {
                 $query->where('id', 'like', "%{$search}%")
                       ->orWhere('cantidad', 'like', "%{$search}%")
-                      ->orWhere('fechaIngreso', 'like', "%{$search}%")
-                      ->orWhere('idProducto', 'like', "%{$search}%")
-                      ->orWhere('codigoInventario', 'like', "%{$search}%")
+                      ->orWhere('fechaingreso', 'like', "%{$search}%")
+                      ->orWhere('idproducto', 'like', "%{$search}%")
+                      ->orWhere('codigoinventario', 'like', "%{$search}%")
                       ->orWhere('observacion', 'like', "%{$search}%")
                       ->orWhereHas('producto', function($q) use ($search) {
                           $q->where('nombre', 'like', "%{$search}%");
@@ -63,8 +63,16 @@ class IngresoController extends Controller
             'observacion' => 'nullable|string',
         ]);
 
+        $payload = [
+            'cantidad' => $request->cantidad,
+            'fechaingreso' => $request->fechaIngreso,
+            'idproducto' => $request->idProducto,
+            'codigoinventario' => $request->codigoInventario,
+            'observacion' => $request->observacion,
+        ];
+
         // Crear el ingreso
-        $ingreso = Ingresos::create($request->only(['cantidad','fechaIngreso','idProducto','codigoInventario','observacion']));
+        $ingreso = Ingresos::create($payload);
         
         // Actualizar la cantidad en productos (sumar)
         $producto = Productos::find($request->idProducto);
@@ -119,7 +127,7 @@ class IngresoController extends Controller
         $diferencia = $cantidadNueva - $cantidadAnterior;
         
         // Si cambió el producto, restar del producto anterior y sumar al nuevo
-        if ($ingreso->idProducto != $request->idProducto) {
+        if ($ingreso->idproducto != $request->idProducto) {
             // Restar del producto anterior
             $productoAnterior = Productos::find($ingreso->idProducto);
             if ($productoAnterior) {
@@ -143,7 +151,7 @@ class IngresoController extends Controller
         }
         
         // Si cambió el inventario, restar del inventario anterior y sumar al nuevo
-        if ($ingreso->codigoInventario != $request->codigoInventario) {
+        if ($ingreso->codigoinventario != $request->codigoInventario) {
             // Restar del inventario anterior
             $inventarioAnterior = Inventarios::where('codigo', $ingreso->codigoInventario)->first();
             if ($inventarioAnterior) {
@@ -167,7 +175,15 @@ class IngresoController extends Controller
         }
 
         // Actualizar el ingreso
-        $ingreso->update($request->only(['cantidad','fechaIngreso','idProducto','codigoInventario','observacion']));
+        $payloadUpdate = [
+            'cantidad' => $request->cantidad,
+            'fechaingreso' => $request->fechaIngreso,
+            'idproducto' => $request->idProducto,
+            'codigoinventario' => $request->codigoInventario,
+            'observacion' => $request->observacion,
+        ];
+
+        $ingreso->update($payloadUpdate);
 
         return redirect()->route('ingresos.index')->with('success', 'Ingreso actualizado correctamente.');
     }
@@ -180,14 +196,14 @@ class IngresoController extends Controller
         $ingreso = Ingresos::findOrFail($id);
         
         // Restar la cantidad del producto
-        $producto = Productos::find($ingreso->idProducto);
+        $producto = Productos::find($ingreso->idproducto);
         if ($producto) {
             $producto->cantidad -= $ingreso->cantidad;
             $producto->save();
         }
         
         // Restar la cantidad del inventario
-        $inventario = Inventarios::where('codigo', $ingreso->codigoInventario)->first();
+        $inventario = Inventarios::where('codigo', $ingreso->codigoinventario)->first();
         if ($inventario) {
             $inventario->cantidadProductos -= $ingreso->cantidad;
             $inventario->save();

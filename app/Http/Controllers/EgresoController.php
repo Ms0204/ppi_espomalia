@@ -22,9 +22,9 @@ class EgresoController extends Controller
             ->when($search, function($query) use ($search) {
                 $query->where('id', 'like', "%{$search}%")
                       ->orWhere('cantidad', 'like', "%{$search}%")
-                      ->orWhere('fechaEgreso', 'like', "%{$search}%")
-                      ->orWhere('idProducto', 'like', "%{$search}%")
-                      ->orWhere('codigoInventario', 'like', "%{$search}%")
+                      ->orWhere('fechaegreso', 'like', "%{$search}%")
+                      ->orWhere('idproducto', 'like', "%{$search}%")
+                      ->orWhere('codigoinventario', 'like', "%{$search}%")
                       ->orWhere('observacion', 'like', "%{$search}%")
                       ->orWhereHas('producto', function($q) use ($search) {
                           $q->where('nombre', 'like', "%{$search}%");
@@ -63,8 +63,16 @@ class EgresoController extends Controller
             'observacion' => 'nullable|string',
         ]);
 
+        $payload = [
+            'cantidad' => $request->cantidad,
+            'fechaegreso' => $request->fechaEgreso,
+            'idproducto' => $request->idProducto,
+            'codigoinventario' => $request->codigoInventario,
+            'observacion' => $request->observacion,
+        ];
+
         // Crear el egreso
-        $egreso = Egresos::create($request->only(['cantidad','fechaEgreso','idProducto','codigoInventario','observacion']));
+        $egreso = Egresos::create($payload);
         
         // Actualizar la cantidad en productos (restar)
         $producto = Productos::find($request->idProducto);
@@ -119,7 +127,7 @@ class EgresoController extends Controller
         $diferencia = $cantidadNueva - $cantidadAnterior;
         
         // Si cambió el producto, sumar al producto anterior y restar del nuevo
-        if ($egreso->idProducto != $request->idProducto) {
+        if ($egreso->idproducto != $request->idProducto) {
             // Sumar al producto anterior (devolver lo que se había restado)
             $productoAnterior = Productos::find($egreso->idProducto);
             if ($productoAnterior) {
@@ -143,7 +151,7 @@ class EgresoController extends Controller
         }
         
         // Si cambió el inventario, sumar al inventario anterior y restar del nuevo
-        if ($egreso->codigoInventario != $request->codigoInventario) {
+        if ($egreso->codigoinventario != $request->codigoInventario) {
             // Sumar al inventario anterior (devolver lo que se había restado)
             $inventarioAnterior = Inventarios::where('codigo', $egreso->codigoInventario)->first();
             if ($inventarioAnterior) {
@@ -167,7 +175,15 @@ class EgresoController extends Controller
         }
 
         // Actualizar el egreso
-        $egreso->update($request->only(['cantidad','fechaEgreso','idProducto','codigoInventario','observacion']));
+        $payloadUpdate = [
+            'cantidad' => $request->cantidad,
+            'fechaegreso' => $request->fechaEgreso,
+            'idproducto' => $request->idProducto,
+            'codigoinventario' => $request->codigoInventario,
+            'observacion' => $request->observacion,
+        ];
+
+        $egreso->update($payloadUpdate);
 
         return redirect()->route('egresos.index')->with('success', 'Egreso actualizado correctamente.');
     }
@@ -180,14 +196,14 @@ class EgresoController extends Controller
         $egreso = Egresos::findOrFail($id);
         
         // Devolver la cantidad al producto (sumar porque se está eliminando el egreso)
-        $producto = Productos::find($egreso->idProducto);
+        $producto = Productos::find($egreso->idproducto);
         if ($producto) {
             $producto->cantidad += $egreso->cantidad;
             $producto->save();
         }
         
         // Devolver la cantidad al inventario (sumar porque se está eliminando el egreso)
-        $inventario = Inventarios::where('codigo', $egreso->codigoInventario)->first();
+        $inventario = Inventarios::where('codigo', $egreso->codigoinventario)->first();
         if ($inventario) {
             $inventario->cantidadProductos += $egreso->cantidad;
             $inventario->save();
