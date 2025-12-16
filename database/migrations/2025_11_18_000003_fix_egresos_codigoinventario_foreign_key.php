@@ -45,16 +45,16 @@ return new class extends Migration
         if ($hasObservacion) {
             DB::statement('
                 INSERT INTO egresos_temp (id, cantidad, fechaegreso, idproducto, codigoinventario, observacion, created_at, updated_at)
-                SELECT e.id, e.cantidad, e."fechaEgreso", e."idProducto", i.codigo, e.observacion, e.created_at, e.updated_at
+                SELECT e.id, e.cantidad, e.fechaegreso, e.idproducto, i.codigo, e.observacion, e.created_at, e.updated_at
                 FROM egresos e
-                LEFT JOIN inventarios i ON e."codigoInventario" = i.id
+                LEFT JOIN inventarios i ON e.codigoinventario = i.id
             ');
         } else {
             DB::statement('
                 INSERT INTO egresos_temp (id, cantidad, fechaegreso, idproducto, codigoinventario, created_at, updated_at)
-                SELECT e.id, e.cantidad, e."fechaEgreso", e."idProducto", i.codigo, e.created_at, e.updated_at
+                SELECT e.id, e.cantidad, e.fechaegreso, e.idproducto, i.codigo, e.created_at, e.updated_at
                 FROM egresos e
-                LEFT JOIN inventarios i ON e."codigoInventario" = i.id
+                LEFT JOIN inventarios i ON e.codigoinventario = i.id
             ');
         }
         

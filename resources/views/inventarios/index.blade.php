@@ -20,10 +20,10 @@
             <li><a href="{{ url('inventarios') }}">Gestión de Inventarios</a></li>
             <li><a href="{{ url('pagos') }}">Gestión de Pagos</a></li>
             <li><a href="{{ url('reportes') }}">Gestión de Reportes</a></li>
+            <li><a href="{{ url('categorias') }}">Gestión de Categorías</a></li>
+            <li><a href="{{ url('productos') }}">Gestión de Productos</a></li>
             <li><a href="{{ url('ingresos') }}">Gestión de Ingresos</a></li>
             <li><a href="{{ url('egresos') }}">Gestión de Egresos</a></li>
-            <li><a href="{{ url('productos') }}">Gestión de Productos</a></li>
-            <li><a href="{{ url('categorias') }}">Gestión de Categorías</a></li>
             <li><a href="{{ url('roles') }}">Gestión de Roles</a></li>
             <li><a href="{{ url('permisos') }}">Gestión de Permisos</a></li>
             <li>

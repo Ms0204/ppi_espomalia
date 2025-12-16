@@ -14,19 +14,19 @@ return new class extends Migration
         Schema::create('egresos', function (Blueprint $table) {
             $table->id();
             $table->integer('cantidad');
-            $table->date('fechaEgreso');
+            $table->date('fechaegreso');
 
             // producto: FK to productos.id
-            $table->unsignedBigInteger('idProducto');
-            $table->foreign('idProducto')
+            $table->unsignedBigInteger('idproducto');
+            $table->foreign('idproducto')
                 ->references('id')
                 ->on('productos')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
 
             // codigoInventario: FK to inventarios.id
-            $table->unsignedBigInteger('codigoInventario');
-            $table->foreign('codigoInventario')
+            $table->unsignedBigInteger('codigoinventario');
+            $table->foreign('codigoinventario')
                 ->references('id')
                 ->on('inventarios')
                 ->onDelete('restrict')
