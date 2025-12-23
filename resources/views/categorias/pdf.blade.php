@@ -54,7 +54,7 @@
     <div class="header">
         <h1>Reporte de Categorías</h1>
         <p>Sistema de Gestión | PPI-ESPOMALIA</p>
-        <p>Fecha de generación: {{ date('d/m/Y') }}</p>
+        <p>Fecha de generación: {{ \Carbon\Carbon::now('America/Guayaquil')->format('d/m/Y H:i') }}</p>
     </div>
 
     <table>
